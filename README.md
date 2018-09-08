@@ -1,4 +1,4 @@
-#Musical Ensemble
+# Musical Ensemble
 
 This system trains an ensemble of LSTM networks for the purposes of music generation. Each network is trained on a genre-specific subset of the full midi dataset. The ensemble of networks is then presented with a random seed from which to generate music. 
 
