@@ -32,11 +32,7 @@ def add_interval_to_list(l, prev_note, note):
     else:
         interval_size = get_interval_size(note, note, (-12, 12))
 
-    offset = offset % 2
-    offset = math.ceil(offset * 2) / 2.0
-
-    #if prev_note is not None:
-        #print(prev_note.name + ' -> ' + note.name + ' (' + str(interval_size) + ',' + str(offset) + ')')
+    offset = min(math.ceil(offset * 2) % 2, 1.5)
 
     l.append((interval_size, offset))
 
@@ -67,7 +63,6 @@ for file in glob.glob('midi\\testMidiFolder\\*.mid'):
             note_sequence, prev_note = add_interval_to_list(note_sequence, prev_note, element)
         elif isinstance(element, chord.Chord):
             chordNotes = element.pitchNames
-            #print('---Chord---')
             for n in chordNotes:
                 if prev_note is not None:
                     n = note.Note(n + str(prev_note.pitch.implicitOctave))
@@ -75,7 +70,6 @@ for file in glob.glob('midi\\testMidiFolder\\*.mid'):
                     n = note.Note(n)
                 n.offset = element.offset
                 note_sequence, prev_note = add_interval_to_list(note_sequence, prev_note, n)
-            #print('^^^Chord^^^')
 
 sequenceLength = 100 + 1
 

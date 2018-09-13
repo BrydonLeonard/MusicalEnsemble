@@ -9,30 +9,30 @@ from keras.layers import Activation
 from keras.callbacks import ModelCheckpoint
 import numpy as np
 import fileManagement
+import utils
+import argparse
 
-modelName = 'placeholder'
+parser = argparse.ArgumentParser(description='Train on a midi dataset')
+parser.add_argument('folder', help='The path to the folder containing the training data')
+parser.add_argument('model_name', help='The name of the model')
+parser.add_argument('--r', help='Reload the training data from the midi files', action="store_true")
+
+args = parser.parse_args()
+
+modelName = args.model_name
 
 print('Model name is "' + modelName + '"')
 
-training_data = fileManagement.get_training_data('testMidiFolder')
-noteMapping = fileManagement.load_note_mappings()
-numUniqueNotes = len(noteMapping)
+X, y = fileManagement.load_training_data(args.folder, args.r)
+note_mappings = fileManagement.load_note_mappings('midi/noteMappings.csv')
+numOutputs = len(note_mappings)
 
 sequenceLength = 100 + 1
 
 training_patterns = []
 
-for i in range(sequenceLength, len(training_data)):
-    seq = training_data[i-sequenceLength:i]
-    training_patterns.append([noteMapping[j] for j in seq])
-
-numPatterns = len(training_patterns)
-noteSequences = array(training_patterns)
-
-X, y = noteSequences[:, :-1], noteSequences[:, -1]
-X = X.reshape(numPatterns, sequenceLength - 1, 1)
-X = X / float(numUniqueNotes)
-y = to_categorical(y, num_classes=numUniqueNotes)
+y = array([utils.note_to_category(note[0], note[1]) for note in y])
+y = to_categorical(y, numOutputs)
 
 model = Sequential()
 model.add(LSTM(512, return_sequences=True, input_shape=(X.shape[1], X.shape[2])))
@@ -42,11 +42,10 @@ model.add(Dropout(0.3))
 model.add(LSTM(256))
 model.add(Dense(256, activation='softmax'))
 model.add(Dropout(0.3))
-model.add(Dense(numUniqueNotes, activation='softmax'))
+model.add(Dense(numOutputs, activation='softmax'))
 print(model.summary())
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-
 
 file_path = "weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"
 checkpoint = ModelCheckpoint(
