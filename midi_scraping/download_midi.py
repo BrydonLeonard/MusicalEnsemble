@@ -28,9 +28,9 @@ for genre in urls:
     print('Starting genre: ' + genre)
     for i in range(0, len(urls[genre])):
         print(str(i) + '/' + str(len(urls[genre])))
-        if not os.path.exists('scraped/' + genre + '/'):
-            os.makedirs('scraped/' + genre)
-        with open('scraped/' + genre + '/' + genre + '-' + str(i) + '.mid', 'wb') as f:
+        if not os.path.exists('../midi/genres/' + genre + '/'):
+            os.makedirs('../midi/genres/' + genre)
+        with open('../midi/genres/' + genre + '/' + genre + '-' + str(i) + '.mid', 'wb') as f:
             c = pycurl.Curl()
             c.setopt(c.URL, urls[genre][i])
             c.setopt(c.WRITEDATA, f)

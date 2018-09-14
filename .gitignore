@@ -3,3 +3,4 @@
 __pycache__/
 midi/
 *.mid
+data/

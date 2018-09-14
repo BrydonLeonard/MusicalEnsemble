@@ -1,6 +1,6 @@
 import fileManagement
 
-mappings = fileManagement.load_note_mappings('midi/noteMappings.csv')
+mappings = fileManagement.load_note_mappings('note_mappings.csv')
 
 
 def note_to_category(note, length):
