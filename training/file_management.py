@@ -1,8 +1,6 @@
 import glob
-from music21 import converter, instrument, note, chord
-import re
 from numpy import array
-import os
+import numpy as np
 
 
 def load_note_mappings():
@@ -12,7 +10,7 @@ def load_note_mappings():
 
     for line in note_mapping_file.read().split('\n'):
         spl = line.split(',')
-        if (len(spl) > 1):
+        if len(spl) > 1:
             d[spl[1]] = int(spl[0])
 
     return d
@@ -21,13 +19,16 @@ def load_note_mappings():
 def load_training_data(folder, genre):
     file_name = glob.glob(folder + '/*' + genre + '*.csv')[0]
     with open(file_name, 'r') as f:
-        data = [line.split(',') for line in f.read().split('\n')]
+        data = array([])
+        output = array([])
+        for line in f:
+            line = line.rstrip()
+            if line:
+                spl = line.split(',')
+                np.append(data, spl[:-1])
+                np.append(output, spl[-1])
 
-    data = array(data)
-    x, y = data[:, :-1], data[:, -1]
-    x.reshape(len(x), len(x[0]), len(x[0][0]))
-
-    return x, y
+    return data.reshape(len(data), 100, 1), output
 
 
 def load_note_mappings(file_name):
