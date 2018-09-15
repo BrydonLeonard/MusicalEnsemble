@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Extract training data from midi fi
 parser.add_argument('-e', help='Extract midi files', action='store_true')
 parser.add_argument('-g', help='Create genre-groupings', action='store_true')
 
-args = parser.parser_args()
+args = parser.parse_args()
 
 num_cores = 4
 
@@ -50,7 +50,7 @@ def parse_csv_files(root_folder):
     for folder in glob.glob(root_folder + '/*'):
         if os.path.isdir(folder):
             print('    Checking folder ' + folder)
-            for file in glob.glob(folder + '/*.mid'):
+            for file in glob.glob(folder + '/*.csv'):
                 with open(file, 'r') as f:
                     data = f.read().split('\n')
 
@@ -60,11 +60,14 @@ def parse_csv_files(root_folder):
 
     print('  Writing genres')
     for g in genres:
+        print('    Writing genre: ' + g)
         data = genres[g]
+        print('      ' + str(len(data)) + ' patterns')
         if not os.path.exists('data'):
             os.mkdir('data')
         with open('data/' + g + '.csv', 'w') as file:
-            file.write('\n'.join(data))
+            for line in data:
+                file.write(line + '\n')
 
     print('  Writing genre summary')
     with open('data/genres.csv', 'w') as file:
