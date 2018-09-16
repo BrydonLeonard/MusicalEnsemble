@@ -26,8 +26,6 @@ X, y = file_management.load_training_data(args.training_data, args.genre)
 note_mappings = file_management.load_note_mappings('note_mappings.csv')
 numOutputs = len(note_mappings)
 
-print(X.shape)
-
 sequenceLength = 100 + 1
 
 training_patterns = []

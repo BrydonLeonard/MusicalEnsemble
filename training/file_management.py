@@ -1,32 +1,38 @@
 import glob
 from numpy import array
-import numpy as np
+import util_scripts.space_efficient_array as efficient
 
 
-def load_note_mappings():
-    note_mapping_file = open('notes.csv', 'r')
-
-    d = dict()
-
-    for line in note_mapping_file.read().split('\n'):
-        spl = line.split(',')
-        if len(spl) > 1:
-            d[spl[1]] = int(spl[0])
-
-    return d
+# def load_note_mappings():
+#     note_mapping_file = open('notes.csv', 'r')
+#
+#     d = dict()
+#
+#     for line in note_mapping_file.read().split('\n'):
+#         spl = line.split(',')
+#         if len(spl) > 1:
+#             d[spl[1]] = int(spl[0])
+#
+#     return d
 
 
 def load_training_data(folder, genre):
     file_name = glob.glob(folder + '/*' + genre + '*.csv')[0]
     with open(file_name, 'r') as f:
-        data = array([])
-        output = array([])
+        data = []
+        output = []
+        print('Loading data...')
         for line in f:
             line = line.rstrip()
             if line:
                 spl = line.split(',')
-                np.append(data, spl[:-1])
-                np.append(output, spl[-1])
+                data.append([int(x) for x in spl[:-1]])
+                output.append([int(spl[-1])])
+
+    data = array(data)
+    output = array(output)
+    print(data[:3])
+    print(output[:3])
 
     return data.reshape(len(data), 100, 1), output
 
