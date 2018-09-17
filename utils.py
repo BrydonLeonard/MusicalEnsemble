@@ -1,5 +1,6 @@
 from training import file_management
 import math
+from music21 import note
 
 notePos = dict((note, pos) for (note, pos) in [('C', 0), ('D-', 1), ('C#', 1), ('D', 2), ('E-', 3), ('D#', 3), ('E', 4), ('F', 5), ('G-', 6), ('F#', 6), ('G', 7), ('A-', 8), ('G#', 8), ('A', 9), ('B-', 10), ('A#', 10), ('B', 11), ])
 mappings = file_management.load_note_mappings('note_mappings.csv')
@@ -24,22 +25,25 @@ def category_to_note_and_offset(category):
 
 
 def get_note_from_interval_and_offset(note1, interval, offset):
-    note1_pos = notePos[note1.name] + note1.pitch.implicitOctave * 12
-    note2_pos = note1_pos + interval
+    note1_pos = notePos[note1.name]
+    note2_pos = (note1_pos + int(interval)) % 12
 
-    note2_octave = math.floor(note2_pos / 12)
-
-    note2_note_index = note2_pos % 12
-
-    note2_note = 'A'
+    #note2_note = 'A'
 
     for tup in notePos:
-        if notePos[tup] == note2_note_index:
+        if notePos[tup] == note2_pos:
             note2_note = tup
-    note2 = note.Note(note2_note + str(note2_octave))
-    note2.offset = note1.offset + offset
 
-    print(note1.pitch)
-    print(note2.pitch)
+    note2_octave = note1.pitch.implicitOctave
+
+    if note1_pos < note2_pos and int(interval) < 0:
+        note2_octave -= 1
+    elif note1_pos > note2_pos and int(interval) > 0:
+        note2_octave += 1
+
+    note2_octave = max(0, note2_octave)
+
+    note2 = note.Note(nameWithOctave=(note2_note + str(note2_octave)))
+    note2.offset = note1.offset + float(offset)
 
     return note2

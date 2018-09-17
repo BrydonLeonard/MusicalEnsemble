@@ -10,7 +10,7 @@ class Voter:
 
     def get_next_note_vote(self, previous_notes):
         previous_notes_array = array(previous_notes)
-        previous_notes_array.reshape((1, len(previous_notes), 1))
+        previous_notes_array = previous_notes_array.reshape((1, len(previous_notes), 1))
 
         predicted_note = self.model.predict(previous_notes_array, verbose=0)
 

@@ -33,11 +33,13 @@ training_patterns = []
 y = to_categorical(y, numOutputs)
 
 model = Sequential()
-model.add(LSTM(256, return_sequences=True, input_shape=(100, 1)))
+model.add(LSTM(300, return_sequences=True, input_shape=(100, 1)))
 model.add(Dropout(0.3))
-model.add(LSTM(128))
+model.add(LSTM(300, return_sequences=True))
 model.add(Dropout(0.3))
-model.add(Dense(128, activation='softmax'))
+model.add(LSTM(300))
+model.add(Dropout(0.3))
+model.add(Dense(150, activation='softmax'))
 model.add(Dropout(0.3))
 model.add(Dense(numOutputs, activation='softmax'))
 print(model.summary())
@@ -54,4 +56,4 @@ checkpoint = ModelCheckpoint(
 callbacks_list = [checkpoint]     
 model.fit(X, y, epochs=200, batch_size=64, callbacks=callbacks_list)
 
-model.save('models/model_ ' + args.genre + '.h5')
+model.save('models/model_' + args.genre + '.h5')
