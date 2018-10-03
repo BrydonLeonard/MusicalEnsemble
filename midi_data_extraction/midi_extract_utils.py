@@ -62,6 +62,7 @@ def extract_sequence_from_midi_file(file):
                 note_sequence, prev_note = add_interval_to_list(note_sequence, prev_note, element)
             elif isinstance(element, chord.Chord):
                 chordNotes = element.pitchNames
+                firstChordNote = note.Note(chordNotes[0] + str(prev_note.pitch.implicitOctave))
                 for n in chordNotes:
                     if prev_note is not None:
                         n = note.Note(n + str(prev_note.pitch.implicitOctave))
@@ -69,6 +70,7 @@ def extract_sequence_from_midi_file(file):
                         n = note.Note(n)
                     n.offset = element.offset
                     note_sequence, prev_note = add_interval_to_list(note_sequence, prev_note, n)
+                note_sequence, prev_note = add_interval_to_list(note_sequence, prev_note, firstChordNote)
 
         return note_sequence
     except:
